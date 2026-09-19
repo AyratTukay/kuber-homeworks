@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deploy
+  namespace: netology
+spec:
+  selector:
+    matchLabels:
+      app: nginx-svc
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: nginx-svc
+    spec:
+      initContainers:
+      - name: wait-for-service
+        image: busybox
+        command:
+          - sh
+          - -c
+          - |
+            for i in $(seq 1 150); do
+              if wget --spider --timeout=2 http://nginx-svc; then
+                echo "Service is up."
+                exit 0
+              else
+                CODE=$?
+                echo "Attempt $i failed with code $CODE"
+              fi
+              sleep 2
+            done
+            exit 1
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 10
+          periodSeconds: 5
+         
