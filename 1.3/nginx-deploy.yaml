@@ -20,14 +20,13 @@ spec:
           - sh
           - -c
           - |
+            TARGET="http://nginx-multitool-svc.netology.svc.cluster.local"
             for i in $(seq 1 150); do
-              if wget --spider --timeout=2 http://nginx-svc; then
-                echo "Service is up."
+              if wget --spider --timeout=2 "$TARGET"; then
+                echo "Service is up via FQDN."
                 exit 0
-              else
-                CODE=$?
-                echo "Attempt $i failed with code $CODE"
               fi
+              echo "Waiting for service... ($i/150)"
               sleep 2
             done
             exit 1
