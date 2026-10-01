@@ -1,0 +1,13 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: developer-pod-reader       # Имя привязки
+  namespace: default               # Действует в namespace default
+subjects:
+- kind: User
+  name: kuberuser                  # Имя пользователя из CN в сертификате)
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: pod-viewer
+  apiGroup: rbac.authorization.k8s.io

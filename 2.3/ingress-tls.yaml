@@ -1,0 +1,30 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: myapp-ingress
+  labels:
+    app: nginx-multitool
+  annotations:
+    # Аннотация для принудительного перенаправления HTTP -> HTTPS (для контроллеров NGINX)
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  # Блок настройки TLS
+  tls:
+  - hosts:
+      # Доменное имя, для которого действует сертификат
+      - myapp.example.com
+    # Ссылка на созданный нами Secret
+    secretName: tls-secret
+  # Блок правил маршрутизации
+  rules:
+  # Доменное имя, по которому будет доступен сервис
+  - host: myapp.example.com
+    http:
+      paths:
+      - path: /                # Путь URL
+        pathType: Prefix       # Тип сопоставления пути (префикс)
+        backend:
+          service:
+            name: nginx-service
+            port:
+              number: 80
