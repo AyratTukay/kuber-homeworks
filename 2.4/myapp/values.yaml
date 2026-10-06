@@ -1,0 +1,8 @@
+backend:
+  image: wbitt/network-multitool
+  replicas: 1
+
+frontend:
+  image: nginx
+  replicas: 1
+
